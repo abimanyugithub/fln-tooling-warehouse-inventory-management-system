@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'assets/sb-admin-2/css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+    <!-- HTMX core -->
+    <script src="{% static 'assets/add-on/htmx.min.js' %}"></script>
+    <title>{{ title }}</title>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include "includes/navbar.html" %}
+        <!-- modal -->
+        {% include "includes/modals/main_modal.html" %}
+        <!-- End modal -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid small">
+            <div class="d-sm-flex align-items-center justify-content-between mb-5">
+                <span class="h4 mb-0 text-gray-800">{{ header }}</span>
+            </div>
+
+            <!-- DataTables Physical Inventory -->
+            {% for data in sto_locations %}
+            <div class="text-dark card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Physical Inventory</h6>
+                        <h6 class="d-none d-sm-inline-block font-weight-bold text-primary">{{ data.no_loc_id }}</h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mt-2 mb-2">
+                        <form class="" method="POST" autocomplete="off" enctype="multipart/form-data" action="{% url 'UpdateStockOpname' data.id %}">
+                            {% csrf_token %}
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-3">Part No.</label>
+                                    <input class="form-control border-bottom" type="text" value="{{ data.prod_code_id }}" disabled>
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-3">Location</label>
+                                    <input class="form-control border-bottom" type="text" name="no_loc" value="{{ data.no_loc_id }}" readonly>
+                                </div>
+                            </div>
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-3">Part Description</label>
+                                    <textarea class="form-control border-bottom textarea" disabled>{{ data.prod_code.prod_desc }}</textarea>
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <div class="row">
+                                        <div class="col-sm-6 flex-column d-flex">
+                                            <label class="form-control-label px-3">Location Type</label>
+                                            {% for key, value in options_assign.items %}
+                                            {% if key == data.no_loc.assign %}
+                                            <input class="form-control border-bottom" type="text" value="{{ value }}" disabled>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="col-sm-6 flex-column d-flex">
+                                            <label class="form-control-label px-3">Status</label>
+                                            {% for key, value in options_stats_loc.items %}
+                                            {% if key == data.no_loc.status %}
+                                            <input class="form-control border-bottom" type="text" value="{{ value }}" disabled>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <div class="row">
+                                        <div class="col-sm-6 flex-column d-flex">
+                                            <label class="form-control-label px-3">Qty. Stock</label>
+                                            <input class="form-control border-bottom" type="text" value="{{ data.qty }}" disabled>
+                                        </div>
+                                        <div class="col-sm-6 flex-column d-flex">
+                                            <label class="form-control-label px-3">Qty. Physical</label>
+                                            <input class="form-control border-bottom" type="number" min=0 id="qty" name="qty" placeholder="0" onkeypress="return isNumberKey(event)" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="msg-error"></div>
+                            <div class="d-sm-flex align-items-right justify-content-end">
+                                <div class="d-none d-sm-inline-block">
+                                    <input type="hidden" name="id" value="{{ data.id }}"/>
+                                    <input type="hidden" name="uid" value="{{ user.username }}"/>
+                                    <button id="btnSave" class="btn btn-primary btn-sm px-2 shadow-sm" type="submit">Submit</button>
+                                    <a class="btn btn-secondary btn-sm shadow-sm px-3 " href="{% url 'ViewStockOpname' %}">Back</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Jika lokasi tidak ada product atau free -->
+            {% if not sto_locations %}
+            {% for data in no_product %}
+            <div class="text-dark card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Physical Inventory</h6>
+                        <h6 class="d-none d-sm-inline-block font-weight-bold text-primary">{{ data.no_loc }}</h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mt-2 mb-2">
+                        <div class="row justify-content-between text-left">
+                            <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-3">Location</label>
+                                <span class="form-control border-bottom">{{ data.no_loc }}</span>
+                            </div>
+                        </div>
+                        <div class="row justify-content-between text-left">
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Location Type</label>
+                                        {% for key, value in options_assign.items %}
+                                        {% if key == data.assign %}
+                                        <span class="form-control border-bottom">{{ value }}</span>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Status</label>
+                                        {% for key, value in options_stats_loc.items %}
+                                        {% if key == data.status %}
+                                        <span class="form-control border-bottom">{{ value }}</span>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-sm-flex align-items-right justify-content-end">
+                            <form method="POST" action="{% url 'ConfirmStockOpname' data.no_loc %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                                <input type="hidden" value="CHK" name="sto_check">
+                                <button type="submit" class="btn btn-sm btn-primary shadow-sm px-3 mr-1">Confirm</button>
+                            </form>
+                            <form method="POST" action="{% url 'ConfirmStockOpname' data.no_loc %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if data.assign == 'P' %}
+                                <input type="hidden" value="PND" name="sto_check">
+                                <button type="submit" class="btn btn-sm btn-warning shadow-sm text-dark px-3">Pending</button>
+                                {% elif data.assign == 'R' %}
+                                <a class="btn btn-sm btn-info shadow-sm px-3" href="{% url 'AddRsvStockOpname' data.no_loc %}">Edit</a>
+                                {% endif %}
+                                <a class="btn btn-secondary btn-sm shadow-sm px-3 " href="{% url 'ViewStockOpname' %}">Back</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+<!-- End of Main Content -->
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+    <!-- End of Footer -->
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'assets/sb-admin-2/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'assets/sb-admin-2/js/sb-admin-2.min.js' %}"></script>
+<!-- Page level plugins -->
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Page level custom scripts -->
+<script src="{% static 'assets/sb-admin-2/js/demo/datatables-demo.js' %}"></script>
+
+<!-- Script launch modal -->
+{% if messages %}
+<script type="application/javascript">
+    $(document).ready(function(){
+        $('#modalPush').modal('show');
+    });
+</script>
+{% endif %}

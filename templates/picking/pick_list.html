@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'assets/sb-admin-2/css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+    <title>{{ title }}</title>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include "includes/navbar.html" %}
+        <!-- modal -->
+        {% include "includes/modals/main_modal.html" %}
+        <!-- End modal -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid small">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-5">
+                <span class="h4 mb-0 text-gray-800">{{ header }}</span>
+                <a type="button" class="btn btn-sm btn-labeled btn-success shadow-sm" href="{% url 'Dashboard' %}">
+                    <span class="btn-label"><i class="fa fa-tachometer-alt fa-fw text-white-50"></i></span>Dashboard
+                </a>
+            </div>
+
+            <!-- Search -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Search</h6>
+                </div>
+                <div class="card-body">
+                    <form id="myForm" class="" action="{% url 'ResultPicking' %}" method="GET">
+                        {% csrf_token %}
+                        <div class="row justify-content-between text-left">
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Part No.</label>
+                                        <input class="form-control border-bottom" type="text" id="prod_code" name="prod_code" placeholder="Enter Part No." autocomplete="off">
+                                    </div>
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Part Description</label>
+                                        <input class="form-control border-bottom" type="text" id="prod_desc" name="prod_desc" placeholder="Enter Part Description" autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Location</label>
+                                        <input class="form-control border-bottom" type="text" id="no_loc" name="no_loc" placeholder="Enter Location" autocomplete="off">
+                                    </div>
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">&nbsp;</label>
+                                        <div class="d-none d-sm-inline-block">
+                                            <button id="btnSave" class="btn btn-primary btn-sm shadow-sm" type="submit"><i class="fas fa-search fa-sm mx-2"></i></button>
+                                            <a class="btn btn-secondary btn-sm px-3 shadow-sm" href="{% url 'ViewPicking' %}">Reset</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Data Result -->
+            {% if data_list %}
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Result</h6>
+                        <a class="btn btn-secondary btn-sm ml-1 shadow-sm" onclick="window.history.back()">Cancel</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mt-2 mb-2">
+                       <table class="text-dark table table-bordered table-sm" id="dataTable1i" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Part Image</th>
+                                    <th>Part No.</th>
+                                    <th>Part Description</th>
+                                    <th>Available Qty.</th>
+                                    <th>Location</th>
+                                    <th>Storage</th>
+                                    <th>Tooling Area Part</th>
+                                    <th class="text-center" style="width:5%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>{% for data in data_list %}
+                                <tr>
+                                    <td class="align-middle">{{ forloop.counter }}</td>
+                                    <td class="align-middle" width="8%">
+                                        <a href="{% if data.prod_code.img %}#img-{{ data.prod_code_id }}{% endif %}" data-toggle="modal" >
+                                            <img class="img-thumbnail" id="image-preview" src="{% if data.prod_code.img %}{{ data.prod_code.img.url }}{% else %}{% static 'assets/images/placeholder.jpg' %}{% endif %}" alt="Image Preview">
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">{{ data.prod_code_id }}</td>
+                                    <td class="align-middle">{{ data.prod_code.prod_desc }}</td>
+                                    <td class="align-middle">{{ data.qty }}</td>
+                                    <td class="align-middle">{{ data.no_loc_id }}</td>
+                                    <td class="align-middle">
+                                        {% for key, value in options_storage.items %}
+                                        {% if key == data.no_loc.storage %}{{ value }}{% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="align-middle">
+                                        {% for key, value in options_area.items %}
+                                        {% if key == data.no_loc.area %}{{ value }}{% endif %}
+                                        {% endfor %}
+                                    </td>
+                                        <form method="POST" action="{% url 'AddToCart' %}" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="hidden" value="{{ data.prod_code_id }}" name="prod_code" />
+                                            <td class="text-center align-middle"><button type="submit" class="btn btn-primary btn-sm px-3 shadow-sm" {% if data.qty == 0 %}disabled{% endif %}>Take</button></td>
+                                        </form>
+                                </tr>
+                            <!-- Modal -->
+                            {% include "includes/modals/picking_modal.html" %}
+                            <!-- End Modal -->
+                            {% endfor %}
+                            </tbody>
+                       </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% if carts %}
+            <!-- DataTables Order Request -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Order Request</h6>
+                        <a class="btn btn-labeled btn-primary btn-sm shadow-sm" href="{% url 'UpdatePicking' %}">
+                            <span class="btn-label"><i class="fa-solid fa-briefcase fa-fw text-white-50"></i></span>Check Out</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mt-2 mb-2">
+                        <table class="text-dark table table-bordered table-hover table-sm" id="dataTable1i" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Part Image</th>
+                                    <th>Part No.</th>
+                                    <th class="order-column">Part Description</th>
+                                    <th>Available Qty.</th>
+                                    <th>Location</th>
+                                    <th>Storage</th>
+                                    <th>Tooling Area Part</th>
+                                    <th class="text-center" style="width:5%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>{% for data in carts %}
+                                <tr>
+                                    <td class="align-middle">{{ forloop.counter }}</td>
+                                    {% for temp in temp_list %}{% if data.prod_code_id == temp.prod_code_id %}
+                                    <td class="align-middle" width="8%">
+                                        <a href="{% if data.prod_code.img %}#img-{{ data.prod_code_id }}{% endif %}" data-toggle="modal" >
+                                            <img class="img-thumbnail" src="{% if data.prod_code.img %}{{ data.prod_code.img.url }}{% else %}{% static 'assets/images/placeholder.jpg' %}{% endif %}" alt="Image Preview">
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">{{ data.prod_code_id }}</td>
+                                    <td class="align-middle">{{ data.prod_code.prod_desc }}</td>
+                                    <td class="align-middle">{{ temp.qty }}</td>
+                                    <td class="align-middle">{{ temp.no_loc_id }}</td>
+                                    <td class="align-middle">
+                                        {% for key, value in options_storage.items %}
+                                        {% if key == temp.no_loc.storage %}{{ value }}{% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="align-middle">
+                                        {% for key, value in options_area.items %}
+                                        {% if key == temp.no_loc.area %}{{ value }}{% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a class="btn btn-danger btn-sm shadow-sm" data-toggle="modal" data-target="#id-{{ data.id }}">Delete</a>
+                                    </td>
+                                </tr>
+                            <!-- Modal -->
+                            {% include "includes/modals/picking_modal.html" %}
+                            <!-- End Modal -->
+                            {% endif %}{% endfor %}{% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+<!-- End of Main Content -->
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+    <!-- End of Footer -->
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'assets/sb-admin-2/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'assets/sb-admin-2/js/sb-admin-2.min.js' %}"></script>
+<!-- Page level plugins -->
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Page level custom scripts -->
+<script src="{% static 'assets/sb-admin-2/js/demo/datatables-demo.js' %}"></script>
+
+<!-- Script launch modal -->
+{% if messages %}
+<script type="application/javascript">
+    $(document).ready(function(){
+        $('#modalPush').modal('show');
+    });
+</script>
+{% endif %}
+

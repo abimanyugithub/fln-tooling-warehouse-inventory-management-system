@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'assets/sb-admin-2/css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+    <title>{{ title }}</title>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include "includes/navbar.html" %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid small">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-5">
+                <span class="h4 mb-0 text-gray-800 head">{{ header }}</span>
+            </div>
+
+             <!-- Search -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Search</h6>
+                </div>
+                <div class="card-body">
+                    <form class="" action="{% url 'ResultLabel' %}" method="GET">
+                        {% csrf_token %}
+                        <div class="row justify-content-between text-left">
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">From Location<span class="text-danger"> *</span></label>
+                                        <input class="form-control border-bottom" type="text" id="no_loc1" name="no_loc1" placeholder="Enter Location" autocomplete="off" required>
+                                    </div>
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">To Location<span class="text-danger"> *</span></label>
+                                        <input class="form-control border-bottom" type="text" id="no_loc2" name="no_loc2" placeholder="Enter Location" autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Assign Location</label>
+                                        <select class="form-control border-bottom" name="assign">
+                                            <option value="">ALL</option>
+                                            <option disabled>Choose an assign</option>
+                                            {% for key, value in options_assign.items %}
+                                            <option value="{{ key }}">{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-6 flex-column d-flex inline-fields">
+                                        <label class="form-control-label px-3">&nbsp;</label>
+                                        <div class="d-none d-sm-inline-block">
+                                            <button id="btnSave" class="btn btn-primary btn-sm shadow-sm" type="submit"><i class="fas fa-search fa-sm mx-2"></i></button>
+                                            <a class="btn btn-secondary btn-sm px-3 shadow-sm" onclick="window.history.back()">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+<!-- End of Main Content -->
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+    <!-- End of Footer -->
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'assets/sb-admin-2/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'assets/sb-admin-2/js/sb-admin-2.min.js' %}"></script>
+<!-- Page level plugins -->
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Page level custom scripts -->
+<script src="{% static 'assets/sb-admin-2/js/demo/datatables-demo.js' %}"></script>
+<!-- add-on -->
+<script src="{% static 'assets/add-on/export-excel/jszip.min.js' %}"></script>
+<script src="{% static 'assets/add-on/export-excel/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/add-on/export-excel/buttons.html5.min.js' %}"></script>
+

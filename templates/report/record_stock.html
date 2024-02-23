@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+{% load static mathfilters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'assets/sb-admin-2/css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+    <title>{{ title }}</title>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include "includes/navbar.html" %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid small">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-5">
+                <span class="h4 mb-0 text-gray-800 head">{{ header }}</span>
+            </div>
+
+            <!-- DataTables Summary -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Used {{ surplus }}</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ percentage_surplus|floatformat:0 }} %</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ percentage_surplus|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Safety {{ safety }}</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ percentage_safety|floatformat:0 }} %</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ percentage_safety|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Critical {{ critical }}</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ percentage_critical|floatformat:0 }} %</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ percentage_critical|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Empty {{ empty }}</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ percentage_empty|floatformat:0 }} %</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ percentage_empty|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DataTables Search -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Search</h6>
+                </div>
+                <div class="card-body">
+                    <form class="" action="{% url 'ResultStockProduct' %}" method="GET">
+                        {% csrf_token %}
+                        <div class="row justify-content-between text-left">
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Part No. / Description</label>
+                                        <input class="form-control border-bottom" type="text" id="numb" name="numb" placeholder="Enter Part" autocomplete="off">
+                                    </div>
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Stock Level</label>
+                                        <select class="form-control border-bottom" name="level">
+                                            <option disabled>Choose an level</option>
+                                            {% for key, value in options_lvl_sto.items %}
+                                            <option value="{{ key }}">{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="form-group col-sm-6 flex-column d-flex inline-fields">
+                                        <label class="form-control-label px-3">&nbsp;</label>
+                                        <div class="d-none d-sm-inline-block">
+                                            <button id="btnSave" class="btn btn-primary btn-sm shadow-sm" type="submit"><i class="fas fa-search fa-sm mx-2"></i></button>
+                                            <a class="btn btn-secondary btn-sm shadow-sm px-3" href="{% url 'ViewStockProduct' %}">Reset</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if product %}
+            <!-- DataTables Location -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Locations List</h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mt-2 mb-2">
+                        <table class="text-dark table table-bordered table-hover" id="dataTable3" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Part No.</th>
+                                    <th>Part Description</th>
+                                    <th>Min. Stock</th>
+                                    <th>Max. Stock</th>
+                                    <th>Qty</th>
+                                    <th>Qty. After Conversion</th>
+                                    <th class="text-center">Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>{% for data in product %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.prod_code }}</td>
+                                <td>{{ data.prod_code__prod_desc }}</td>
+                                <td>{{ data.prod_code__stock_min }}</td>
+                                <td>{{ data.prod_code__stock_max }}</td>
+                                <td>{{ data.my_sum }}</td>
+                                <td>{{ data.my_sum|div:data.prod_code__pack_size }}</td>
+                                {% if data.my_sum == 0 %}
+                                <td class="text-center"><span class="badge text-white bg-secondary w-100">Empty</span></td>
+                                {% elif data.my_sum <= data.prod_code__stock_min %}
+                                <td class="text-center"><span class="badge text-white bg-warning w-100">Critical</span></td>
+                                {% elif data.my_sum <= data.prod_code__stock_max %}
+                                <td class="text-center"><span class="badge text-white bg-primary w-100">Safety</span></td>
+                                {% elif data.my_sum > data.prod_code__stock_max %}
+                                <td class="text-center"><span class="badge text-white bg-info w-100">Surplus</span></td>
+                                {% endif %}
+                            </tr>{% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+<!-- End of Main Content -->
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+    <!-- End of Footer -->
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'assets/sb-admin-2/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'assets/sb-admin-2/js/sb-admin-2.min.js' %}"></script>
+<!-- Page level plugins -->
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Page level custom scripts -->
+<script src="{% static 'assets/sb-admin-2/js/demo/datatables-demo.js' %}"></script>
+<!-- add-on -->
+<script src="{% static 'assets/add-on/export-excel/jszip.min.js' %}"></script>
+<script src="{% static 'assets/add-on/export-excel/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/add-on/export-excel/buttons.html5.min.js' %}"></script>

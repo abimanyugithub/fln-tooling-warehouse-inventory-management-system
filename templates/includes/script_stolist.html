@@ -1,0 +1,90 @@
+<script>
+  $(document).ready(function() {
+        $('#sto-list-table').DataTable({
+            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'text-center'p>>",
+            "processing": true,
+            "serverSide": true,
+            "lengthChange": false,
+            // "ordering": false,
+            "ajax": {
+                "url": "{% url 'ListLocationStockCount' %}",
+                "dataSrc": "data"  // Specify the data source as 'data'
+            },
+            "columns": [
+                //  { "data": "counter", "className": "align-middle"},
+                { "data": "noloc", "className": "align-middle" },
+                { "data": "cek", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.cek === 'CHK') {
+                      var newcek = 'CHECKED';
+                      return '<div class="text-center"><span class="badge text-white bg-primary w-100">' + newcek + '</span></div>';
+                    } else if (row.cek === 'PND') {
+                      var newcek = 'PENDING';
+                      return '<div class="text-center"><span class="badge bg-warning w-100">' + newcek + '</span></div>';
+                    } else {
+                      var newcek = '';
+                    }
+                    return newcek;
+                    }
+                },
+                { "data": "assgn", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.assgn === 'P') {
+                      var newassgn = 'PRIMARY';
+                    } else {
+                      var newassgn = 'RESERVE';
+                    }
+                    return newassgn;
+                    }
+                },
+                { "data": "stor", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.stor === 'RK') {
+                      var newstor = 'RACK';
+                    } else {
+                      var newstor = 'FLOOR';
+                    }
+                    return newstor;
+                    }
+                },
+                { "data": "area", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.area === 'BL') {
+                      var newarea = 'BLOW';
+                    } else if (row.area === 'IN') {
+                      var newarea = 'INJECTION';
+                    } else if (row.area === 'CH') {
+                      var newarea = 'CHEMICAL (MAINTENANCE)';
+                    } else if (row.area === 'CE') {
+                      var newarea = 'CONSUMABLE ELECTRICAL';
+                    } else if (row.area === 'CM') {
+                      var newarea = 'CONSUMABLE MECHANICAL';
+                    } else {
+                      var newarea = 'VACUUM';
+                    }
+                    return newarea;
+                    }
+                },
+                { "data": "stats", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.stats === 'FL') {
+                      var newstats = 'FREE';
+                    } else if (row.stats === 'UL') {
+                      var newstats = 'USED';
+                    } else if (row.stats === 'HU') {
+                      var newstats = 'HELD';
+                    } else {
+                      var newstats = 'DELETED';
+                    }
+                    return newstats;
+                    }
+                },
+                { "data": null, "className": "align-middle text-center", "render": function(data, type, row) {
+                    return '<form action="{% url 'ResultStockOpname' %}" method="GET" enctype="multipart/form-data">'+
+                    '{% csrf_token %}'+
+                    '<input type="hidden" value="'+ row.noloc +'" name="q" />'+
+                    '<button class="btn btn-primary btn-sm px-3 shadow-sm" type="submit" >Take</button>'+
+                    '</form>';
+                    }
+                }
+            ],
+        });
+    });
+</script>

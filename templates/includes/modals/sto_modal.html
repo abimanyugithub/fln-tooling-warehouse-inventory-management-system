@@ -1,0 +1,24 @@
+<!-- Modal -->
+<div class="modal fade" id="id" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fs-5" id="exampleModalLabel1"><i class="fa fa-exclamation-circle text-primary"></i>&nbsp;Clear checked?</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                Delete progress check status?
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{% url 'RemoveCheckStockOpname' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-primary px-3" name="clear">Clear</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

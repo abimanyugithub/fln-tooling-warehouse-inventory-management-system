@@ -1,0 +1,266 @@
+<!-- Sidebar -->
+{% load static mathfilters %}
+<style>
+    /* on ex2 if you include bootstrap v3 css the number is a rounded circle with the .has-badge class */
+    .ex2 .fa-stack[data-count]:after {
+        position: absolute;
+        right: 0%;
+        top: 1%;
+        content: attr(data-count);
+        font-size: 50%;
+        padding: .6em;
+        border-radius: 999px;
+        line-height: .75em;
+        color: white;
+        background: rgba(255, 0, 0, 0.85);
+        text-align: center;
+        min-width: 2em;
+        font-weight: bold;
+    }
+</style>
+<link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+<link rel="icon" type="image/x-icon" href="{% static 'assets/images/cropped-fln-site-icon-32x32.webp' %}">
+{% if user.is_authenticated %}
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center mt-5 mb-5" href="{% url 'Dashboard' %}">
+        <div class="sidebar-brand-icon">
+            <img src="{% static 'assets/images/fln_logo.png' %}" class="img-fluid w-100 mx-auto d-block" alt="Sample image">
+        </div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'Dashboard' %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+    <!-- Heading -->
+    <div class="sidebar-heading">Transaction</div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <i class="fa-solid fa-box-open"></i>
+            <span>Inbound</span>
+        </a>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Inbound Components:</h6>
+                <a class="collapse-item" href="{% url 'ViewReceiving' %}">Receiving</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Outbound</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Outbound Components:</h6>
+                <a class="collapse-item" href="{% url 'ViewPicking' %}">Picking</a>
+            </div>
+        </div>
+    </li>
+
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+            <i class="fa-solid fa-heart-circle-check"></i>
+            <span>Inventory</span>
+        </a>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Inventory Management:</h6>
+                <a class="collapse-item" href="{% url 'ViewLocation' %}">Location</a>
+                <a class="collapse-item" href="{% url 'ViewProduct' %}">Part</a>
+                <a class="collapse-item" href="{% url 'ViewNewline' %}">Assign Location</a>
+                <a class="collapse-item" href="{% url 'ViewTransfer' %}">Moving Part</a>
+                <a class="collapse-item" href="{% url 'ViewStockOpname' %}">Stock Count</a>
+            </div>
+        </div>
+    </li>
+
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">Addons</div>
+
+    <!-- Nav Item - Pages Reports & Analytics Menu -->
+    <li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReports"
+        aria-expanded="true" aria-controls="collapsePages">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>Reports & Analytics</span>
+    </a>
+    <div id="collapseReports" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Reports Components:</h6>
+            <a class="collapse-item" href="{% url 'ViewAdjustmentRecord' %}">Movement</a>
+            <a class="collapse-item" href="{% url 'ViewStockProduct' %}">Stock Part</a>
+            <a class="collapse-item" href="{% url 'ViewLocationProduct' %}">Stock Part (Location)</a>
+            <div class="collapse-divider"></div>
+            <h6 class="collapse-header">Other Reports:</h6>
+            <a class="collapse-item" href="{% url 'ViewLabel' %}">Print Label</a>
+        </div>
+    </div>
+    </li>
+
+    <!-- Nav Item - Pages Administration Menu -->
+    <li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin"
+        aria-expanded="true" aria-controls="collapsePages">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Administration</span>
+    </a>
+    <div id="collapseAdmin" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Admin Components:</h6>
+            <a class="collapse-item" href="{% url 'ViewUser' %}">Account</a>
+            <a class="collapse-item" href="{% url 'ViewUserUID' %}">RFID Tag User</a>
+        </div>
+    </div>
+    </li>
+
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+
+</ul>
+{% endif %}
+<!-- End of Sidebar -->
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+
+                <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                <li class="nav-item dropdown no-arrow d-sm-none">
+                    <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-search fa-fw"></i>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Alerts -->
+                <li class="nav-item dropdown no-arrow mx-1">
+                    <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell fa-fw"></i>
+                        <!-- Counter - Alerts -->
+                        {% if count_letdown|add:count_pending > 0 %}
+                        <span class="badge badge-danger badge-counter">
+                            {% if count_letdown|add:count_pending > 99 %}99+{% else %}{{ count_letdown|add:count_pending }}{% endif %}
+                        </span>
+                        {% endif %}
+                    </a>
+                    <!-- Dropdown - Alerts -->
+                    <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        aria-labelledby="alertsDropdown">
+                        <h6 class="dropdown-header">
+                            Notications
+                        </h6>
+                        {% if count_pending %}
+                        <a class="dropdown-item d-flex align-items-center" href="{% url 'ViewPicking' %}">
+                            <div class="mr-3">
+                                <div class="ex2">
+                                    <span class="fa-stack fa-2x has-badge" data-count="{% if count_pending > 99 %}99+{% else %}{{ count_pending }}{% endif %}">
+                                        <i class="fa fa-circle fa-stack-2x text-black-50"></i>
+                                        <i class="fa fa-clipboard-list fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="small text-gray-500">Cart</div>
+                                {{ msg_pending }}
+                            </div>
+                        </a>
+                        {% endif %}
+
+                        {% if count_letdown %}
+                        <a class="dropdown-item d-flex align-items-center" href="{% url 'ViewTransfer' %}">
+                            <div class="mr-3">
+                                <div class="ex2">
+                                    <span class="fa-stack fa-2x has-badge" data-count="{% if count_letdown > 99 %}99+{% else %}{{ count_letdown }}{% endif %}">
+                                        <i class="fa fa-circle fa-stack-2x text-black-50"></i>
+                                        <i class="fa fa-box-archive fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="small text-gray-500">Transfer</div>
+                                {{ msg_letdown }}
+                            </div>
+                        </a>
+                        {% endif %}
+                        <a class="dropdown-item text-center small text-gray-500">Close</a>
+                    </div>
+                </li>
+
+                <div class="topbar-divider d-none d-sm-block"></div>
+
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% if user.is_authenticated %}
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.first_name }}</span>
+                        {% endif %}
+                        <img src="{% static 'assets/sb-admin-2/img/undraw_profile.svg' %}" class="img-profile rounded-circle">
+                    </a>
+                    <!-- Dropdown - User Information -->
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                        {% if user.is_authenticated %}
+                        <a class="dropdown-item" href="{% url 'ChangePassPageView' user.id %}">
+                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Change Password
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#id-modal">
+                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Log Out
+                        </a>
+                        {% else %}
+                        <a class="dropdown-item" href="{% url 'LoginPageView' %}">
+                            <i class="fas fa-sign-in-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Log In
+                        </a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </nav>
+<!-- End of Topbar -->
+
+<!-- Modal -->
+{% include "includes/modals/register_modal.html" %}
+<!-- End Modal -->

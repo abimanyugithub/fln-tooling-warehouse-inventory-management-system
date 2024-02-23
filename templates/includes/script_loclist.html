@@ -1,0 +1,74 @@
+<script>
+  $(document).ready(function() {
+        $('#loc-list-table').DataTable({
+            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'text-center'p>>",
+            "processing": true,
+            "serverSide": true,
+            "lengthChange": false,
+            // "ordering": false,
+            "ajax": {
+                "url": "{% url 'ListLocation' %}",
+                "dataSrc": "data"  // Specify the data source as 'data'
+            },
+            "columns": [
+                //  { "data": "counter", "className": "align-middle"},
+                { "data": "noloc", "className": "align-middle" },
+                { "data": "assgn", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.assgn === 'P') {
+                      var newassgn = 'PRIMARY';
+                    } else {
+                      var newassgn = 'RESERVE';
+                    }
+                    return newassgn;
+                    }
+                },
+                { "data": "stor", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.stor === 'RK') {
+                      var newstor = 'RACK';
+                    } else {
+                      var newstor = 'FLOOR';
+                    }
+                    return newstor;
+                    }
+                },
+                { "data": "area", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.area === 'BL') {
+                      var newarea = 'BLOW';
+                    } else if (row.area === 'IN') {
+                      var newarea = 'INJECTION';
+                    } else if (row.area === 'CH') {
+                      var newarea = 'CHEMICAL (MTC)';
+                    } else if (row.area === 'CE') {
+                      var newarea = 'CONSUMABLE ELECTRICAL';
+                    } else if (row.area === 'CM') {
+                      var newarea = 'CONSUMABLE MECHANICAL';
+                    } else {
+                      var newarea = 'VACUUM';
+                    }
+                    return newarea;
+                    }
+                },
+                { "data": "stats", "className": "align-middle", "render": function(data, type, row) {
+                    if (row.stats === 'FL') {
+                      var newstats = 'FREE';
+                    } else if (row.stats === 'UL') {
+                      var newstats = 'USED';
+                    } else if (row.stats === 'HU') {
+                      var newstats = 'HELD';
+                    } else {
+                      var newstats = 'DELETED';
+                    }
+                    return newstats;
+                    }
+                },
+                { "data": null, "className": "align-middle text-center",
+                    "render": function(data, type, row) {
+                        return '<a class="btn btn-primary btn-sm px-3 shadow-sm" href="location/edit/' + row.noloc +'">Edit</a>';
+                    }
+                }
+            ],
+        });
+    });
+</script>

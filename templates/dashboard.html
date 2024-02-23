@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="author" http-equiv="Refresh" content="60"> <!-- Refresh document every 60 seconds: -->
+
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'assets/sb-admin-2/css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- add-on -->
+    <script src="{% static 'assets/add-on/chart/chart.min.js' %}"></script>
+    <script src="{% static 'assets/add-on/chart/chartjs-plugin-datalabels.min.js' %}"></script>
+    <script src="{% static 'assets/add-on/chart/chartjs-plugin-doughnutlabel-rebourne.min.js' %}"></script>
+    <script src="{% static 'assets/add-on/chart/rpie.js' %}"></script>
+
+    <!-- HTMX core -->
+    <script src="{% static 'assets/add-on/htmx.min.js' %}"></script>
+    <title>{{ title }}</title>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include "includes/navbar.html" %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid small">
+             <!-- toast -->
+            {% include "includes/modals/main_modal.html" %}
+            <!-- End toast -->
+            <!-- Page Heading -->
+            <div class="d-sm-flex justify-content-between mb-5">
+                <span class="h4 mb-0 text-gray-800">{{ header }}</span>
+                <a type="button" class="btn btn-labeled btn-sm btn-success shadow-sm" href="{% url 'ViewPicking' %}">
+                    <span class="btn-label"><i class="fa fa-cart-shopping fa-fw text-white-50"></i></span>New Pick Order
+                </a>
+            </div>
+
+
+            <!-- Content Row -->
+            <div class="row">
+                <!-- primary & reserve product -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body"> <div class="d-flex h6 font-weight-bold text-primary text-uppercase mb-1 justify-content-between">
+                                <div class="text-left">locations {{ total_location }}</div><div class="text-right"><i class="fas fa-thumbtack fa-2x text-gray-300"></i></div>
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_primary_used }} ({{ percent_total_primary_used|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">used primary</div></div>
+                                </div>
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_reserve_used }} ({{ percent_total_reserve_used|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">used reserve</div></div>
+                                </div>
+                            </div>
+                            <div class="row mt-2 no-gutters align-items-center">
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_primary_free }} ({{ percent_total_primary_free|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">free primary</div></div>
+                                </div>
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_reserve_free }} ({{ percent_total_reserve_free|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">free reserve</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Active an Blocked product -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body"> <div class="d-flex h6 font-weight-bold text-success text-uppercase mb-1 justify-content-between">
+                                <div class="text-left">parts {{ total_product }}</div><div class="text-right"><i class="fas fa-cog fa-2x text-gray-300"></i></div>
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_active }} ({{ percent_total_active|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">active</div></div>
+                                </div>
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_with_reserve }} ({{ percent_total_with_reserve|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">multi locations</div></div>
+                                </div>
+                            </div>
+                            <div class="row mt-2 no-gutters align-items-center">
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_block }} ({{ percent_total_block|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">blocked</div></div>
+                                </div>
+                                <div class="col">
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">{{ total_not_reserve }} ({{ percent_total_not_reserve|floatformat:0 }}%)<hr class="m-0 mt-1 mb-1 w-75"><div class="text-xs mb-0 text-muted text-uppercase">single location</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- traffic (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="d-flex h6 font-weight-bold text-info text-uppercase mb-1 justify-content-between">
+                                        <div class="text-left">traffic — {% now "F" %}</div><div class="text-right"><i class="fas fa-exchange-alt fa-rotate-90 fa-2x text-gray-300"></i></div>
+                                    </div>
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">incoming {{ incoming1 }}</div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto">
+                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ percent_incoming|floatformat:0 }}%</div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="progress progress-sm mr-2">
+                                                <div class="progress-bar bg-info" role="progressbar"
+                                                    style="width: {{ percent_incoming|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0"
+                                                    aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="m-0 mt-2 mb-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">outgoing {{ outgoing1 }}</div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto">
+                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ percent_outgoing|floatformat:0 }}%</div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="progress progress-sm mr-2">
+                                                <div class="progress-bar bg-warning" role="progressbar"
+                                                    style="width: {{ percent_outgoing|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0"
+                                                    aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-12 mt-4 text-xs">{{ msg_traffic }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Picking request -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="d-flex h6 font-weight-bold text-warning text-uppercase mb-1 justify-content-between">
+                                       <div class="text-left">last picked</div><div class="text-right"><i class="fas fa-shopping-cart fa-2x text-gray-300"></i></div>
+                                    </div>
+                                    <div class="d-flex text-xs text-gray-700 text-uppercase mt-3 justify-content-between">
+                                       <div class="text-left text-md text-gray-700">{{ last_picked.date_created|date:'F d, o H:i' }}</div><div class="text-right small text-gray-700"></div>
+                                    </div>
+                                    <hr class="m-0  mb-2">
+                                    <div>
+                                        <table class="table table-sm text-uppercase" width="100%" cellspacing="0">
+                                            <thead class="bg-gradient-warning text-white">
+                                                <tr>
+                                                    <th>pic</th>
+                                                    <th>part no.</th>
+                                                    <th>location</th>
+                                                    <th class="text-center">issue qty.</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-group-divider">
+                                            {% for last in last_picked %}
+                                            <tr>
+                                                <td>{{ last.uid }}</td>
+                                                <td>{{ last.prod_code_id }}</td>
+                                                <td>{{ last.no_loc }}</td>
+                                                <td class="text-center">{{ last.qty_adj|cut:'-' }} pcs</td>
+                                            </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+                <!-- Area Chart -->
+                <div class="col-lg-6 col-md-6 mb-4">
+                    <div class="card shadow h-100 mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary text-uppercase">summary charts</h6>
+                            <div class="dropdown no-arrow">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                    aria-labelledby="dropdownMenuLink">
+                                    <div class="dropdown-header">Summary:</div>
+                                    <a class="dropdown-item" href="{% url 'ViewLocationProduct' %}">Report Location</a>
+                                    <a class="dropdown-item" href="{% url 'ViewStockProduct' %}">Report Stock</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body  d-flex flex-row align-items-center justify-content-center">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="chart-area">
+                                        <canvas id="myChart1"></canvas>
+                                    </div>
+                                    <hr>
+                                    <div class="mt-4 small">
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-primary"></i> USED
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-warning"></i> FREE
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="chart-area">
+                                        <canvas id="myChart2"></canvas>
+                                    </div>
+                                    <hr>
+                                    <div class="mt-4 small">
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-info"></i> SURPLUS
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-primary"></i> SAFETY
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-warning"></i> CRITICAL
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-secondary"></i> EMPTY
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- sto -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card shadow h-100 mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary text-uppercase">stock count</h6>{{ last_sto.date_created|date:"d/m/Y" }}
+                            <div class="dropdown no-arrow">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink1"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                    aria-labelledby="dropdownMenuLink1">
+                                    <div class="dropdown-header">Summary:</div>
+                                    <a class="dropdown-item" href="{% url 'ViewStockOpname' %}">Stock Count Action</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex flex-row align-items-center justify-content-center">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="chart-area">
+                                        <canvas id="canvas3" width="250" height="250"></canvas>
+                                        <p class="text-center">{{ checked }} of {{ total_location }}</p>
+                                    </div>
+
+                                    <div class="d-flex text-sm font-weight-bold text-uppercase mb-1 justify-content-between">
+                                       <div class="text-primary text-left">checked</div><div class="text-warning text-right">pending</div>
+                                    </div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto">
+                                            <div class="h6 mb-0 mr-3 font-weight-bold text-gray-800">{{ percent_checked_ok|floatformat:0 }}%</div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="progress progress-sm mr-2">
+                                                <div class="progress-bar bg-primary w-{{ percent_checked_ok|floatformat:0 }}" role="progressbar" style="width: {{ percent_checked_ok|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="progress-bar bg-warning w-{{ percent_checked_pending|floatformat:0 }}" role="progressbar" style="width: {{ percent_checked_pending|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="progress-bar bg-gray-300 w-{{ percent_check_none|floatformat:0 }}" role="progressbar" style="width: {{ percent_check_none|floatformat:0 }}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="h6 mb-0 font-weight-bold text-gray-800">{{ percent_checked_pending|floatformat:0 }}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- demand -->
+                <div class="col-xl-3 col-md-2 mb-4">
+                    <div class="card shadow mb-4 h-100">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary text-uppercase">top 3: most demand — {% now "F" %}</h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm text-uppercase" width="100%" cellspacing="0">
+                                <caption class="small font-weight-bold">highest frequency of requests</caption>
+                                <thead class="bg-gradient-dark text-white">
+                                <tr>
+                                    <th>no.</th>
+                                    <th>part no.</th>
+                                    <th class="text-center">total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for data in demand_times %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ data.prod_code_id }}</td>
+                                    <td class="text-center">{{ data.num_item }} times</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <hr>
+                            <table class="table table-sm text-uppercase mt-4" width="100%" cellspacing="0">
+                                <caption class="small font-weight-bold">highest quantity frequency</caption>
+                                <thead class="bg-gradient-dark text-white">
+                                <tr>
+                                    <th>no.</th>
+                                    <th>part no.</th>
+                                    <th class="text-center">total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for data in demand_qty %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ data.prod_code_id }}</td>
+                                    <td class="text-center">{{ data.qty_sum|cut:'-' }} pcs</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <!-- Content Row -->
+        </div>
+    </div>
+<!-- End of Main Content -->
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+    <!-- End of Footer -->
+</body>
+</html>
+<script>
+        $(document).ready(function () {
+            setInterval(function () {
+               //get data from ajax request which returns json and output in result div
+
+                $('#wrapper').load(' #wrapper')
+            }, 3000);
+        });
+    </script>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'assets/sb-admin-2/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'assets/sb-admin-2/js/sb-admin-2.min.js' %}"></script>
+<!-- Page level plugins -->
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Page level custom scripts -->
+<script src="{% static 'assets/sb-admin-2/js/demo/datatables-demo.js' %}"></script>
+
+<!-- Script launch modal -->
+{% if messages %}
+<script type="application/javascript">
+    $(document).ready(function(){
+        $('#modalPush').modal('show');
+    });
+</script>
+{% endif %}
+
+<script>
+var obj3 = {
+    pie: 'stroke',
+    values: [{% if percent_sto %}{{ percent_sto|floatformat:0 }}{% else %}0{% endif %}],
+    colors: ['#00ccb1'],
+    isStrokePie: {
+        stroke: 20,
+        overlayStroke: true,
+        overlayStrokeColor: '#eee',
+        strokeStartEndPoints: 'Yes',
+        strokeAnimation: true,
+        strokeAnimationSpeed: 20,
+        fontSize: '60px',
+        textAlignement: 'center',
+        fontFamily: 'Arial',
+        fontWeight: 'bold'
+    }
+};
+generatePieGraph('canvas3', obj3);
+</script>
+<script>
+// chart.js
+new Chart('myChart1', {
+    type: 'doughnut',
+    plugins: [ChartDataLabels, DoughnutLabel],
+    data: {
+        labels: ["USED", "FREE"],
+        datasets: [{
+            data: [{{ total_reserve_used }} + {{ total_primary_used }}, {{ total_reserve_free }} + {{ total_primary_free }} ],
+            backgroundColor: ['#4e73df', '#f6c23e'],
+            hoverOffset: 5
+        }],
+    },
+    options: {
+        cutout: '60%',
+        responsive: false,
+        plugins: {
+            doughnutlabel: {
+                    labels: [
+                        {
+                        text: '{{ total_location }}',
+                        font: {
+                            size: 24,
+                            weight: 'bold',
+                            },
+                        },
+                      {
+                        text: 'LOCATIONS',
+                        font: {
+                            size: 10,
+                        },
+                      },
+                  ],
+                },
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    // boxHeight: 15,
+                    font:{
+                        // size: 14
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: 'LOCATIONS USAGE',
+                position:'top',
+                fontColor: '#000',
+                font: {
+                   // size: 14,
+                }
+            },
+            datalabels: {
+                formatter: (value, ctx) => {
+                    let sum = 0;
+                    let dataArr = ctx.chart.data.datasets[0].data;
+                    dataArr.map(data => {
+                        sum += data;
+                    });
+                    let percentage = (value*100 / sum).toFixed(0)+"%";
+                    return percentage + " (" + value + ") "
+                },
+            color: '#000',
+            backgroundColor: 'rgba(234, 236, 244, 1)',
+            font: {
+                   // size: 16,
+                }
+            }
+        },
+    },
+});
+</script>
+<script>
+// chart.js
+new Chart('myChart2', {
+    type: 'doughnut',
+    plugins: [ChartDataLabels, DoughnutLabel],
+    data: {
+        labels: ["SURPLUS", "SAFETY", "CRITICAL"],
+        datasets: [{
+            data: [{{ surplus }}, {{ safety }},{{ critical }}, {{ empty }}],
+            backgroundColor: ['#36b9cc', '#4e73df', '#f6c23e', '#858796'],
+            hoverOffset: 5
+        }],
+    },
+    options: {
+        cutout: '60%',
+        responsive: false,
+        elements: {
+            center: {
+            text: 'Red is 2/3 of the total numbers',
+            color: '#FF6384', // Default is #000000
+          }
+        },
+        plugins: {
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    font:{
+                        // size: 14
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: 'PARTS STOCK',
+                position:'top',
+                fontColor: '#000',
+                font: {
+                   // size: 12
+                }
+            },
+            datalabels: {
+                formatter: (value, ctx) => {
+                    let sum = 0;
+                    let dataArr = ctx.chart.data.datasets[0].data;
+                    dataArr.map(data => {
+                        sum += data;
+                    });
+                    let percentage = (value*100 / sum).toFixed(1)+"%";
+                    return percentage + " (" + value + ") "
+                },
+            color: '#000',
+            backgroundColor: 'rgba(234, 236, 244, 1)',
+            font: {
+                    // size: 16,
+                }
+            },
+            doughnutlabel: {
+                labels: [
+                    {
+                    text: '{{ total_product }}',
+                    font: {
+                        size: 24,
+                        weight: 'bold',
+                        },
+                    },
+                  {
+                    text: 'PARTS',
+                    font: {
+                        size: 10,
+                    },
+                  },
+              ],
+            },
+        },
+    },
+});
+</script>

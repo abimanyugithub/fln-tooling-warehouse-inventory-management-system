@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'assets/sb-admin-2/css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+    <title>{{ title }}</title>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include "includes/navbar.html" %}
+        <!-- modal -->
+        {% include "includes/modals/main_modal.html" %}
+        <!-- End modal -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid small">
+            <div class="d-sm-flex align-items-center justify-content-between mb-5">
+                <span class="h4 mb-0 text-gray-800">{{ header }}</span>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-primary btn-labeled dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="btn-label">
+                        <i class="fa-solid fa-pen-to-square fa-fw text-white-50"></i></span>New Location</button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="{% url 'AddLocation' %}">Single Location</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'AddLocationMass' %}">Multiple Locations</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add New Location -->
+            <div class="card shadow mb-4 text-dark">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Edit Location</h6>
+                </div>
+                <div class="card-body">
+                    <form class="" method="POST" autocomplete="off" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row justify-content-between text-left">
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Location</label>
+                                        <span class="form-control border-bottom">{{ data.no_loc }}</span>
+                                    </div>
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Location Type{% if not data.status == 'UL' %}<span class="text-danger"> *</span>{% endif %}</label>
+                                        {% if data.status == 'UL' %}
+                                        {% for key, value in options_assign.items %}
+                                            {% if key == data.assign %}
+                                                <span class="form-control border-bottom">{{ value }}</span>
+                                                <input type="hidden" value="{{ key }}" name="assign">
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        <select class="form-control border-bottom" name="assign">
+                                            {% for key, value in options_assign.items %}
+                                            <option value="{{ key }}" {% if key == data.assign %}selected{% endif %}>{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 flex-column d-flex">
+                                <div class="row">
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Tooling Parts Area<span class="text-danger"> *</span></label>
+                                        <select class="form-control border-bottom" name="area">
+                                            {% for key, value in options_area.items %}
+                                            <option value="{{ key }}" {% if key == data.area %}selected{% endif %}>{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6 flex-column d-flex">
+                                        <label class="form-control-label px-3">Storage<span class="text-danger"> *</span></label>
+                                        <select class="form-control border-bottom" name="storage">
+                                            {% for key, value in options_storage.items %}
+                                            <option value="{{ key }}" {% if key == data.storage %}selected{% endif %}>{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <label class="text-xs form-control-label px-3">Last updated: {{ data.modified|date:"d/m/Y" }} {{ data.modified|date:"H:i" }}</label>
+                        <div class="d-sm-flex align-items-right justify-content-end">
+
+                            <div class="d-none d-sm-inline-block">
+                                <button id="btnSave" class="btn btn-primary btn-sm shadow-sm px-3" type="submit" {% if data.status == 'DL' or data.status == 'HU' %}disabled{% endif %}>Save</button>
+                                {% if data.status == 'FL' %}
+                                <a class="btn btn-danger btn-sm shadow-sm px-3" data-toggle="modal" data-target="#id-{{ data.no_loc|cut:'.' }}">Delete</a>
+                                {% elif data.status == 'DL' %}
+                                <a class="btn btn-info btn-sm shadow-sm px-3" data-toggle="modal" data-target="#id-{{ data.no_loc|cut:'.' }}">Restore</a>
+                                {% elif data.status == 'UL' and data.assign == 'R' %}
+                                <a class="btn btn-warning btn-sm shadow-sm px-3 text-dark" data-toggle="modal" data-target="#id-{{ data.no_loc|cut:'.' }}">Hold</a>
+                                {% elif data.status == 'HU' and data.assign == 'R' %}
+                                <a class="btn btn-success btn-sm shadow-sm px-3" data-toggle="modal" data-target="#id-{{ data.no_loc|cut:'.' }}">Open</a>
+                                {% endif %}
+                                <a class="btn btn-secondary btn-sm shadow-sm px-3 " href="{% url 'ViewLocation' %}">Back</a>
+                            </div>
+                        </div>
+                    </form>
+                    {% include "includes/modals/location_modal.html" %}
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+<!-- End of Main Content -->
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+    <!-- End of Footer -->
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'assets/sb-admin-2/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'assets/sb-admin-2/js/sb-admin-2.min.js' %}"></script>
+<!-- Page level plugins -->
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Page level custom scripts -->
+<script src="{% static 'assets/sb-admin-2/js/demo/datatables-demo.js' %}"></script>
+
+<!-- Script launch modal -->
+{% if messages %}
+<script type="application/javascript">
+    $(document).ready(function(){
+        $('#modalPush').modal('show');
+    });
+</script>
+{% endif %}
+

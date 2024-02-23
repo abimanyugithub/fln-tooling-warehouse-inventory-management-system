@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap-5.3.2-dist/css/bootstrap.min.css' %}">
+    <script src="{% static 'assets/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/add-on/jquery.min.js' %}"></script>
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/images/cropped-fln-site-icon-32x32.webp' %}">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+    <!-- HTMX core -->
+    <script src="{% static 'assets/add-on/htmx.min.js' %}"></script>
+    <title>{{ title }}</title>
+<body>
+<section class="vh-100 fullBg" >
+    <div class="h-100 layer">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-12 col-xl-11">
+                <!-- card -->
+                <div class="container card shadow-lg text-muted bg-body">
+                    <div class="card-body p-md-5">
+                        <div class="row justify-content-center">
+                            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                                <p class="text-center h4 mb-5 mx-1 mx-md-4 mt-4">{{ header }}</p>
+                                <form class="mx-1 mx-md-4" method="POST" autocomplete="off" enctype="multipart/form-data" hx-post="{% url 'check-username-login' %}" hx-trigger="change" hx-target="#username-error">
+                                    {% csrf_token %}
+                                    <div class="d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-circle-user fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill form-floating mb-0">
+                                            <input type="text" id="form3Example3c" class="form-control form-control-sm border-bottom" name="username" placeholder="" required/>
+                                            <label class="form-label text-secondary" for="form3Example3c">{{ form.username.label_tag|cut:":" }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill form-floating mb-0">
+                                            <input type="password" id="form3Example4c" class="form-control form-control-sm border-bottom" name="password1" placeholder="" required/>
+                                            <label class="form-label text-secondary" for="form3Example4c">Password</label>
+                                        </div>
+                                    </div>
+                                    <div id="username-error" class="d-flex justify-content-center mb-5">
+                                    </div>
+                                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                        <button id="btnSave" type="submit" class="btn btn-sm btn-primary btn-lg px-3 shadow-sm" disabled>Log In</button>
+                                        <a type="button" class="btn btn-sm btn-secondary btn-lg ms-2 px-3 shadow-sm" onclick="window.history.back()">Cancel</a>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                                <figure class="figure">
+                                <img src="{% static 'assets/images/fln_logo.png' %}" class="img-fluid w-75 mx-auto d-block" alt="Sample image">
+                                    <figcaption class="figure-caption text-center"><h5>Tooling Warehouse Management System</h5></figcaption>
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

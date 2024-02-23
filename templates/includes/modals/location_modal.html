@@ -1,0 +1,68 @@
+
+<!-- Modal -->
+<div class="modal fade my-modal" id="id-{{ data.no_loc|cut:'.' }}" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            {% if data.status == 'DL' %} <!-- restore deleted -->
+            <div class="modal-header">
+                <h6 class="modal-title fs-5" id="exampleModalLabel2"><i class="fa fa-question-circle text-primary"></i>&nbsp;Restore location</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to restore <strong>{{ data.no_loc }}</strong>?
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{% url 'UpdateStatusLocation' data.no_loc %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" value="FL" name="status" />
+                    <input class="btn btn-sm btn-primary shadow-sm" type="submit" value="Restore">
+                    <button type="button" class="btn btn-sm btn-secondary shadow-sm" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+
+            {% elif data.assign == 'R' and data.status != 'FL' %} <!-- update location as held or used -->
+            <div class="modal-header">
+                <h6 class="modal-title fs-5" id="exampleModalLabel2"><i class="fa fa-question-circle text-primary"></i>&nbsp;{% if data.status == 'HU' %}
+                    Unheld{% else %}Hold{% endif %} location?</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to {% if data.status == 'HU' %}open held{% else %}hold{% endif %} location <strong>{{ data.no_loc }}</strong>?
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{% url 'UpdateStatusLocation' data.no_loc %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if data.status == 'UL' %}
+                    <input type="hidden" value="HU" name="status" />
+                    {% elif data.status == 'HU' %}
+                    <input type="hidden" value="UL" name="status" />
+                    {% endif %}
+                    <input class="btn btn-sm btn-primary shadow-sm px-3" type="submit" value="{% if data.status == 'UL' %}Hold{% else %}Open{% endif %}">
+                    <button type="button" class="btn btn-sm btn-secondary shadow-sm" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+
+            {% else %}
+            <div class="modal-header">
+                <h6 class="modal-title fs-5" id="exampleModalLabel2"><i class="fa fa-exclamation-circle text-primary"></i>&nbsp;Delete location</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <strong>{{ data.no_loc }}</strong>?
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{% url 'UpdateStatusLocation' data.no_loc %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" value="DL" name="status" />
+                    <input class="btn btn-sm btn-danger shadow-sm" type="submit" value="Delete">
+                    <a type="button" class="btn btn-sm btn-secondary shadow-sm" data-dismiss="modal">Close</a>
+                </form>
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+

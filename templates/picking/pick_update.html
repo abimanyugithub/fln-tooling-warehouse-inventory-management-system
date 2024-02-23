@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'assets/fontawesome/css/all.css' %}">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'assets/sb-admin-2/css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom css -->
+    <link href="{% static 'assets/custom/custom-style.css' %}" rel="stylesheet" type="text/css">
+    <!-- HTMX core -->
+    <script src="{% static 'assets/add-on/htmx.min.js' %}"></script>
+    <title>{{ title }}</title>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include "includes/navbar.html" %}
+        <!-- modal -->
+        {% include "includes/modals/main_modal.html" %}
+        <!-- End modal -->
+
+        <!-- Begin Page Content -->
+        <form class="" method="POST" autocomplete="off" enctype="multipart/form-data" hx-post="{% url 'check-pick-update' %}" hx-trigger="change" hx-target="#msg-error">
+            {% csrf_token %}
+            <div class="container-fluid small">
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-5">
+                    <span class="h4 mb-0 text-gray-800">{{ header }}</span>
+                </div>
+
+                <!-- Data Check out -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Check Out</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mt-4 mb-4 w-25">
+                            <!-- text area -->
+                            <div class="bg-light p-2">
+                                <div class="d-flex flex-row align-items-start"><img class="rounded-circle" src="{% static 'assets/sb-admin-2/img/undraw_profile.svg' %}" width="40">
+                                    <textarea class="form-control ml-3 border-bottom textarea" maxlength="160" id="comment" name="comment" placeholder="Type a new comment here" required
+                                    hx-post="{% url 'check-textarea' %}" hx-trigger="keyup" hx-target="#msg-error"></textarea>
+                                </div>
+                            </div>
+                            <!-- end text area -->
+                        </div>
+
+                        <div class="mt-2 mb-2">
+                           <table class="text-dark table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Part No.</th>
+                                        <th>Part Description</th>
+                                        <th>Available Qty.</th>
+                                        <th>Location</th>
+                                        <th>Storage</th>
+                                        <th>Tooling Area Part</th>
+                                        <th>Issue Qty.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>{% for data in object_list %}
+                                    <tr>
+                                        <td class="align-middle">{{ forloop.counter }}</td>
+                                        {% for temp in temp_list %}
+                                            {% if temp.prod_code_id == data.prod_code_id %}
+                                        <td class="align-middle">{{ temp.prod_code_id }}</td>
+                                        <td class="align-middle">{{ temp.prod_code.prod_desc }}</td>
+                                        <td class="align-middle"><input type="hidden" value="{{ temp.qty }}" name="qty_avail" />
+                                            {{ temp.qty }}
+                                        </td>
+                                        <td class="align-middle">{{ temp.no_loc_id }}</td>
+                                        <td class="align-middle">
+                                            {% for key, value in options_storage.items %}
+                                            {% if key == temp.no_loc.storage %}{{ value }}{% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td class="align-middle">
+                                            {% for key, value in options_area.items %}
+                                            {% if key == temp.no_loc.area %}{{ value }}{% endif %}
+                                            {% endfor %}
+                                        </td>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <td class="align-middle">
+                                            <input type="hidden" value="{{ data.prod_code_id }}" name="prod_code" />
+                                            <input type="hidden" value="AO" name="adjust" />
+                                            <input class="form-control form-control-sm target" min="1" type="number" id="qty" name="qty" placeholder=0 onkeypress="return isNumberKey(event)" autocomplete="off" required>
+                                        </td>
+                                    </tr>{% endfor %}
+                                </tbody>
+                            </table>
+                            <div id="msg-error"></div>
+                            <div class="row d-flex justify-content-end mr-1">
+                                <div class="col-xs-6">
+                                    <a id="btnSave" class="btn btn-primary btn-sm shadow-sm disabled" data-toggle="modal" data-target="#id-tap">Submit</a>
+                                </div>
+                                <div class="col-xs-6">
+                                    <a class="btn btn-secondary btn-sm ml-1 shadow-sm" onclick="window.history.back()">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal -->
+            {% include "includes/modals/dialog_tap_card.html" %}
+            <!-- End modal -->
+        </form>
+        <!-- /.container-fluid -->
+    </div>
+<!-- End of Main Content -->
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+    <!-- End of Footer -->
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'assets/sb-admin-2/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'assets/sb-admin-2/js/sb-admin-2.min.js' %}"></script>
+<!-- Page level plugins -->
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Page level custom scripts -->
+<script src="{% static 'assets/sb-admin-2/js/demo/datatables-demo.js' %}"></script>
+
+<!-- Script launch modal -->
+{% if messages %}
+<script type="application/javascript">
+    $(document).ready(function(){
+        $('#modalPush').modal('show');
+    });
+</script>
+{% endif %}

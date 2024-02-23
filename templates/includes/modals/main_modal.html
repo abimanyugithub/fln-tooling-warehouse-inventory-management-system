@@ -1,0 +1,324 @@
+{% load static custom_tags %}
+{% for message in messages %}
+<!--Modal: modalPush-->
+<div class="modal fade" id="modalPush" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} text-white">
+            <h6 class="heading">{{ message.tags|upper }}!</h6>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                {% if message.tags == 'error' %}
+                <i class="far fa-frown fa-4x animated rotateIn mb-4 text-danger"></i>
+                {% elif message.tags == 'success' or message.tags == 'info' %}
+                <i class="far fa-smile fa-4x animated rotateIn mb-4 text-{{ message.tags }}"></i>
+                {% endif %}
+                <h6>{{ message|safe }}</h6>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <a type="button" class="btn btn-sm btn-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} waves-effect" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+    <!--/.Content-->
+</div>
+<!--Modal: modalPush-->
+
+<!--Modal: modalPush-->
+<div class="modal fade" id="modalPush2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} text-white">
+                <h6 class="heading">{{ message.tags|upper }}!</h6>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                {% if message.tags == 'error' %}
+                <i class="far fa-frown fa-4x animated rotateIn mb-4 text-danger"></i>
+                {% elif message.tags == 'success' or message.tags == 'info' %}
+                <i class="far fa-smile fa-4x animated rotateIn mb-4 text-{{message.tags}}"></i>
+                {% endif %}
+                <h6>{{ message|safe }}</h6>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <a type="button" class="btn btn-sm btn-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} waves-effect" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+    <!--/.Content-->
+</div>
+<!--Modal: modalPush-->
+<style>
+    .tab-responsive {
+    max-height: 387px; /* Adjust this value according to your needs */
+    overflow-y: auto;
+    display: block;
+    }
+
+    .tab thead th {
+        position: sticky;
+        top: 0;
+        background-color: white; /* Ensure the header background is not transparent */
+        z-index: 1; /* Make sure the header is above other rows when scrolling */
+    }
+</style>
+
+<!-- Modal: modalPush3 tampil modal add mass location -->
+<div class="modal fade" id="modalPush3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} text-white">
+                <h6 class="heading">{{ message.tags|upper }}!</h6>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                {% if message.tags == 'error' %}
+                <i class="far fa-frown fa-4x animated rotateIn mb-4 text-danger"></i>
+                {% elif message.tags == 'success' or message.tags == 'info' %}
+                <i class="far fa-smile fa-4x animated rotateIn mb-4 text-{{message.tags}}"></i>
+                <h6>Locations added successfully.</h6>
+                <a href="#collapseItem" data-toggle="collapse"
+                    role="button" aria-expanded="true" aria-controls="collapseItem">
+                    See result
+                </a>
+                {% endif %}
+                <div id="collapseItem" class="tab-responsive collapse hide mt-3">
+                    <table class="table table-hover table-bordered table-sm table-striped tab" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>No.</th><th>Location</th><th>Location Type</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for message in messages %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ message|safe|cut_before:":" }}</td>
+                            <td>{% if message|safe|cut_after:":" == 'P' %}PRIMARY{% else %}RESERVE{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <a type="button" class="btn btn-sm btn-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} waves-effect" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+    <!--/.Content-->
+</div>
+
+<!-- Modal: modalPush4 tampil modal add mass product -->
+<div class="modal fade" id="modalPush4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} text-white">
+                <h6 class="heading">{{ message.tags|upper }}!</h6>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                {% if message.tags == 'error' %}
+                <i class="far fa-frown fa-4x animated rotateIn mb-4 text-danger"></i>
+                {% elif message.tags == 'success' or message.tags == 'info' %}
+                <i class="far fa-smile fa-4x animated rotateIn mb-4 text-{{message.tags}}"></i>
+                <h6>Parts added successfully.</h6>
+                <a href="#collapseItem4" data-toggle="collapse"
+                    role="button" aria-expanded="true" aria-controls="collapseItem4">
+                    See result
+                </a>
+                {% endif %}
+                <div id="collapseItem4" class="tab-responsive collapse hide mt-3">
+                    <table class="table table-hover table-bordered table-sm table-striped tab" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>No.</th><th>Part No.</th><th>Part Desc.</th>
+                        </tr>
+                        </thead>
+                        <tbody class="text-left">
+                        {% for message in messages %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ message|safe|cut_before:":" }}</td>
+                            <td>{{ message|safe|cut_after:":" }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <a type="button" class="btn btn-sm btn-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} waves-effect" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+    <!--/.Content-->
+</div>
+
+<!-- Modal: modalPush5 tampil modal add mass newline -->
+<div class="modal fade" id="modalPush5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} text-white">
+                <h6 class="heading">{{ message.tags|upper }}!</h6>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                {% if message.tags == 'error' %}
+                <i class="far fa-frown fa-4x animated rotateIn mb-4 text-danger"></i>
+                {% elif message.tags == 'success' or message.tags == 'info' %}
+                <i class="far fa-smile fa-4x animated rotateIn mb-4 text-{{ message.tags }}"></i>
+                <h6>Locations have been successfully added to the products.</h6>
+                <a href="#collapseItem5" data-toggle="collapse"
+                    role="button" aria-expanded="true" aria-controls="collapseItem5">
+                    See result
+                </a>
+                {% endif %}
+                <div id="collapseItem5" class="tab-responsive collapse hide mt-3">
+                    <table class="table table-hover table-bordered table-sm table-striped tab" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>No.</th><th>Location</th><th>Part No.</th><th>Qty.</th>
+                        </tr>
+                        </thead>
+                        <tbody class="text-left">
+                        {% for message in messages %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ message|safe|cut_before:":" }}</td>
+                            <td>{{ message|safe|cut_before:"|"|cut_after:":" }}</td>
+                            <td>{{ message|safe|cut_after:"|" }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <a type="button" class="btn btn-sm btn-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} waves-effect" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+    <!--/.Content-->
+</div>
+
+
+<!-- Modal: modalPush6 tampil modal add receiving -->
+<div class="modal fade" id="modalPush6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} text-white">
+                <h6 class="heading">{{ message.tags|upper }}!</h6>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                {% if message.tags == 'error' %}
+                <i class="far fa-frown fa-4x animated rotateIn mb-4 text-danger"></i>
+                {% elif message.tags == 'success' or message.tags == 'info' %}
+                <i class="far fa-smile fa-4x animated rotateIn mb-4 text-{{message.tags}}"></i>
+                <h6>Received parts successfully added to the warehouse!</h6>
+                <a href="#collapseItem6" data-toggle="collapse"
+                    role="button" aria-expanded="true" aria-controls="collapseItem6">
+                    See result
+                </a>
+                {% endif %}
+                <div id="collapseItem6" class="tab-responsive collapse hide mt-3">
+                    <table class="table table-hover table-bordered table-sm table-striped tab" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>No.</th><th>No. TTB</th><th>Part No.</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for message in messages %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ message|safe|cut_before:":" }}</td>
+                            <td>{{ message|safe|cut_after:":" }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <a type="button" class="btn btn-sm btn-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} waves-effect" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+    <!--/.Content-->
+</div>
+{% endfor %}
+
+<!-- Modal Requirements -->
+<div class="modal fade" id="modalReq" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Requirements</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-4">To add multiple locations, please follow the rules in the table bellow.</p>
+                <table class="table table-bordered table-sm table-striped tab" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Table Entries</th>
+                        <th>Code Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Location Type</td>
+                        <td><p>{% for key, value in options_assign.items %} <strong>{{ key }}</strong> — {{ value }}<br> {% endfor %}</p></td>
+                    </tr>
+                    <tr>
+                        <td>Storage Area</td>
+                        <td><p>{% for key, value in options_storage.items %} <strong>{{ key }}</strong> — {{ value }}<br> {% endfor %}</p></td>
+                    </tr>
+                    <tr>
+                        <td>Tooling Parts Area</td>
+                        <td><p>{% for key, value in options_area.items %} <strong>{{ key }}</strong> — {{ value }}<br> {% endfor %}</p></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
