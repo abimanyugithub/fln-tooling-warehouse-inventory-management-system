@@ -1028,7 +1028,7 @@ def check_any_product(request):
     mins = request.POST.getlist('stock_min')
     maxs = request.POST.getlist('stock_max')
 
-    #   duplicate exists
+    #  duplicate exists
     if len(products) != len(set(products)):
         return HttpResponse(
             '<div class="text-danger ml-1">Duplicates part found.</div><script>$("#btnSave").attr("disabled", "disabled")</script>')
