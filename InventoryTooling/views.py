@@ -1000,7 +1000,7 @@ def check_product(request):
 class FormCreateProduct(ModelForm):
     class Meta:
         model = ModelProduct
-        fields = ['prod_code', 'prod_desc', 'supplier', 'pack_size', 'stock_min', 'stock_max', 'l_time_days', 'img']
+        fields = ['prod_code', 'prod_desc', 'unit', 'supplier', 'pack_size', 'stock_min', 'stock_max', 'l_time_days', 'img']
 
 
 class AddProduct(StaffRequiredMixin, PageTitleViewMixin, CreateView):
