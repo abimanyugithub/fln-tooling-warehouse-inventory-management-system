@@ -2197,12 +2197,14 @@ def ListLocationStockCount(request):
 
     # Map column index to model field names
     columns_map = {
-        0: 'sto_check',
-        1: 'no_loc',
-        2: 'assign',
-        3: 'storage',
-        4: 'area',
-        5: 'status',
+        0: 'no_loc',
+        1: 'sto_check',
+        2: 'part_number',   # bug sort part_number
+        3: 'part_desc',  # bug sort part_desc
+        4: 'assign',
+        5: 'storage',
+        6: 'area',
+        7: 'status',
         # Add mappings for other columns as needed
     }
 
@@ -2214,6 +2216,7 @@ def ListLocationStockCount(request):
         order_field = '-' + order_field  # Prepend '-' for descending order
 
     queryset = ModelLocation.objects.exclude(status="DL").order_by(order_field, 'no_loc')
+    part_location_dict = {part.no_loc_id: (part.prod_code_id, part.prod_code.prod_desc) for part in ModelTempProdLoc.objects.all()}
 
     # Reverse the key-value pairs
     reversed_options_assign = {value: key for key, value in options_assign.items()}
@@ -2254,8 +2257,14 @@ def ListLocationStockCount(request):
 
     # Serialize paginated data
     data = [
-        {'cek': obj.sto_check, 'noloc': obj.no_loc, 'assgn': obj.assign, 'stor': obj.storage,
-         'area': obj.area, 'stats': obj.status} for i, obj in enumerate(page_obj)]
+        {'cek': obj.sto_check,
+         'noloc': obj.no_loc,
+         'assgn': obj.assign,
+         'stor': obj.storage,
+         'area': obj.area,
+         'stats': obj.status,
+         'part_number': part_location_dict.get(obj.no_loc, ('', 0))[0],
+         'part_desc': part_location_dict.get(obj.no_loc, ('', 0))[1],} for i, obj in enumerate(page_obj)]
 
     return JsonResponse({
         'data': data,
