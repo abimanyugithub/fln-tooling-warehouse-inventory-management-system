@@ -1,4 +1,3 @@
-
 .form-control {
     background-color: #f8f9fa;
     background-image: none;
@@ -75,4 +74,10 @@ input[type="number"]:focus {
 /* disable dropdown button arrow down */
 .dropdown-toggle::after{
     display: none;
+}
+
+/* label */
+.card-deck {
+    display: flex;
+    flex-wrap: wrap;
 }
