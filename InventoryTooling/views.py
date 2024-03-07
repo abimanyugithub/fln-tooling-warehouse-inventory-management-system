@@ -665,10 +665,12 @@ def ListLocation(request):
     # Map column index to model field names
     columns_map = {
         0: 'no_loc',
-        1: 'assign',
-        2: 'storage',
-        3: 'area',
-        4: 'status',
+        1: 'part_number',   # bug sort part_number
+        2: 'part_desc',  # bug sort part_desc
+        3: 'assign',
+        4: 'storage',
+        5: 'area',
+        6: 'status',
         # Add mappings for other columns as needed
     }
 
@@ -680,6 +682,7 @@ def ListLocation(request):
         order_field = '-' + order_field  # Prepend '-' for descending order
 
     queryset = ModelLocation.objects.order_by(order_field, 'no_loc')
+    part_location_dict = {part.no_loc_id: (part.prod_code_id, part.prod_code.prod_desc) for part in ModelTempProdLoc.objects.all()}
 
     # Reverse the key-value pairs
     reversed_options_assign = {value: key for key, value in options_assign.items()}
@@ -718,8 +721,14 @@ def ListLocation(request):
 
     # Serialize paginated data
     data = [
-        {'noloc': obj.no_loc, 'assgn': obj.assign, 'stor': obj.storage,
-         'area': obj.area, 'stats': obj.status} for i, obj in enumerate(page_obj)]
+        {'noloc': obj.no_loc,
+         'assgn': obj.assign,
+         'stor': obj.storage,
+         'area': obj.area,
+         'stats': obj.status,
+         'part_number': part_location_dict.get(obj.no_loc, ('', 0))[0],
+         'part_desc': part_location_dict.get(obj.no_loc, ('', 0))[1],
+         } for i, obj in enumerate(page_obj)]
 
     return JsonResponse({
         'data': data,
